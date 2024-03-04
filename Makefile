@@ -1,4 +1,4 @@
-URL_BASE:=https://raw.githubusercontent.com/osschar/cmssw/g4snitch-14.0-p3/SimG4Core/HelpfulWatchers
+URL_BASE := https://raw.githubusercontent.com/osschar/cmssw/g4snitch-14.0-p3/SimG4Core/HelpfulWatchers
 
 DATAFORMAT_SRCS := G4SnitchDataFormat.h G4S_LinkDef.h
 DATAFORMAT_LIB  := libRootG4Snitch.so
@@ -23,3 +23,15 @@ clean:
 
 distclean: clean
 	rm -f ${DATAFORMAT_SRCS}
+
+DATA_BASE :=  http://xrd-cache-1.t2.ucsd.edu/matevz/g4s-data
+DATA_MANIFEST := data-manifest.txt
+
+${DATA_MANIFEST}:
+	curl ${DATA_BASE}/ | perl -ne 'print "$$1\n" if m!<a href="([-\w\d\.]+)">!;' > ${DATA_MANIFEST}
+
+get-data-root: ${DATA_MANIFEST}
+	grep .root ${DATA_MANIFEST} | xargs -i sh -c "echo Downloading {}; curl -sSO ${DATA_BASE}/{}"
+
+get-data-json: ${DATA_MANIFEST}
+	grep .json ${DATA_MANIFEST} | xargs -i sh -c "echo Downloading {}; curl -sSO ${DATA_BASE}/{}"

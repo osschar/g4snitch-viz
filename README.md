@@ -3,10 +3,16 @@
 ```
 # setup ROOT environment
 . [path-to-root]/bin/thisroot.sh
-# alternatively, on lxplus, source root-init.env
-. root-init.env
+# alternatively, on lxplus or where cvmfs is available, source cvmfs-root-init.env
+. cvmfs-root-init.env
+
 # build dictionaries
 make dataformats
+
+# get testing data in ROOT format
+make get-data-root
+# get testing data in JSON format
+make get-data-json
 
 # start root
 root.exe
@@ -32,4 +38,9 @@ root.exe loader.C
 Loaded event 0, size of particle vector=20531, number of primaries=42
 Created JSON object, length=46756
 Written JSON to 'primaries.json'
+```
+
+`loader.C` can take a ROOT file name as argument ... but it needs to be quoted to escape the parenthesis and the file-name string quotation marks like this:
+```
+root.exe loader.C'("Mix50-5-20GeV.root")'
 ```
