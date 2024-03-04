@@ -5,6 +5,8 @@ DATAFORMAT_LIB  := libRootG4Snitch.so
 
 all: test
 
+dataformats: ${DATAFORMAT_LIB}
+
 ${DATAFORMAT_SRCS} &:
 	curl -O ${URL_BASE}/interface/G4SnitchDataFormat.h
 	curl -O ${URL_BASE}/g4s-test/G4S_LinkDef.h
