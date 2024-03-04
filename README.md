@@ -13,6 +13,8 @@ make dataformats
 make get-data-root
 # get testing data in JSON format
 make get-data-json
+# cleanup all downloaded data
+make clean-data
 
 # start root
 root.exe
@@ -27,7 +29,7 @@ root.exe
 ### Using loader.C script and second level dumper.C
 
 ```
-# Init env / build dictionaries as above
+# Init env / build dictionaries / get data as above
 
 root.exe loader.C
   # loader.C loads the data-format & dictionary library, loads the file, then loads dumper.C

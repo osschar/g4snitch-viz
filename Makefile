@@ -28,10 +28,17 @@ DATA_BASE :=  http://xrd-cache-1.t2.ucsd.edu/matevz/g4s-data
 DATA_MANIFEST := data-manifest.txt
 
 ${DATA_MANIFEST}:
-	curl ${DATA_BASE}/ | perl -ne 'print "$$1\n" if m!<a href="([-\w\d\.]+)">!;' > ${DATA_MANIFEST}
+	echo Downloading ${DATA_MANIFEST}
+	@curl -sS ${DATA_BASE}/ | perl -ne 'print "$$1\n" if m!<a href="([-\w\d\.]+)">!;' > ${DATA_MANIFEST}
 
 get-data-root: ${DATA_MANIFEST}
-	grep .root ${DATA_MANIFEST} | xargs -i sh -c "echo Downloading {}; curl -sSO ${DATA_BASE}/{}"
+	@grep .root ${DATA_MANIFEST} | xargs -i sh -c "echo Downloading {}; curl -sSO ${DATA_BASE}/{}"
 
 get-data-json: ${DATA_MANIFEST}
-	grep .json ${DATA_MANIFEST} | xargs -i sh -c "echo Downloading {}; curl -sSO ${DATA_BASE}/{}"
+	@grep .json ${DATA_MANIFEST} | xargs -i sh -c "echo Downloading {}; curl -sSO ${DATA_BASE}/{}"
+
+clean-data:
+	@echo Removing downloaded data
+	@if [ -e ${DATA_MANIFEST} ]; then cat ${DATA_MANIFEST} | xargs rm -f; fi
+	@echo Removing ${DATA_MANIFEST}
+	@rm -f ${DATA_MANIFEST}
