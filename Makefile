@@ -3,7 +3,7 @@ URL_BASE := https://raw.githubusercontent.com/osschar/cmssw/g4snitch-14.0-p3/Sim
 DATAFORMAT_SRCS := G4SnitchDataFormat.h G4S_LinkDef.h
 DATAFORMAT_LIB  := libRootG4Snitch.so
 
-all: test
+all: ${DATAFORMAT_LIB}
 
 dataformats: ${DATAFORMAT_LIB}
 

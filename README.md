@@ -40,9 +40,22 @@ root.exe loader.C
 Loaded event 0, size of particle vector=20531, number of primaries=42
 Created JSON object, length=46756
 Written JSON to 'primaries.json'
+
+  # or, for full dump into 'all-particles.json' (or specify json file name)
+  dump_all()
 ```
 
 `loader.C` can take a ROOT file name as argument ... but it needs to be quoted to escape the parenthesis and the file-name string quotation marks like this:
 ```
 root.exe loader.C'("Mix50-5-20GeV.root")'
+```
+
+Alternatiely, wrap the thing into a here-style script:
+```
+root.exe <<FNORD
+.x loader.C("SingleProton-200GeV.root")
+dump_all("SingleProton-200GeV.json")
+.q
+FNORD
+
 ```

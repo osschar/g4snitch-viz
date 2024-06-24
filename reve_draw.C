@@ -113,7 +113,7 @@ void setup_prop_for_cms(REveTrackPropagator* prop, bool simple_field)
 //==============================================================================
 
 const bool primary_verbose = false;
-const double pt_min = 0.5, pt_max = 18.0;
+const double pt_min = 0.5, pt_max = 500.0;
 const double pt_min_sec = 0.01;
 
 int total_tracks = 0;
@@ -177,7 +177,7 @@ void add_track(int i, int level, int max_level, REveElement *list, REveTrackProp
 
 const bool isRungeKutta = true;
 
-void reve_draw()
+void reve_draw(int max_level=3)
 {
    auto eveMng = REveManager::Create();
 
@@ -208,7 +208,7 @@ void reve_draw()
    {
       if (primary_select(i)) {
          ++n_match;
-         add_track(i, 0, 3, list, prop);
+         add_track(i, 0, max_level, list, prop);
       }
    }
    printf("There are %d primaries between pT %.2f and %.2f, total_tracks=%d\n",

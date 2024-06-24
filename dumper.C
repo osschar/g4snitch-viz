@@ -24,7 +24,7 @@ void dump_json(std::vector<G4S_Particle> &out, const char *fname)
 
 // -- primaries only
 
-void dump_primaries()
+void dump_primaries(const char *fname="primaries.json")
 {
   dump_setup_branch();
 
@@ -37,7 +37,7 @@ void dump_primaries()
     out.push_back( pvec[i] );
   }
 
-  dump_json(out, "primaries.json");
+  dump_json(out, fname);
 }
 
 // -- primaries and secondaries
@@ -59,7 +59,7 @@ void append_secondaries_of(int pi, std::vector<G4S_Particle> &out)
   p.m_daughters_end = out.size();
 }
 
-void dump_primaries_and_scondaries()
+void dump_primaries_and_scondaries(const char *fname="primaries-and-secondaries.json")
 {
   dump_setup_branch();
 
@@ -79,13 +79,13 @@ void dump_primaries_and_scondaries()
     append_secondaries_of(i, out);
   }
 
-  dump_json(out, "primaries-and-secondaries.json");
+  dump_json(out, fname);
 }
 
 // -- dump all
 
-void dump_all()
+void dump_all(const char *fname="all-particles.json")
 {
   dump_setup_branch();
-  dump_json(pvec, "all-particles.json");
+  dump_json(pvec, fname);
 }
