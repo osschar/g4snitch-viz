@@ -3,13 +3,15 @@
 std::vector<G4S_Particle> pvec, *pvec_ptr = &pvec;
 TBranch *b = nullptr;
 
-void dump_setup_branch()
+void dump_setup_branch(int event=0)
 {
-  b = T->GetBranch("p");
-  b->SetAddress(&pvec_ptr);
-  b->GetEntry(0);
-  printf("Loaded event 0, size of particle vector=%d, number of primaries=%d\n",
-	 (int) pvec.size(), pvec[0].n_daughters());
+  if (b == nullptr) {
+    b = T->GetBranch("p");
+    b->SetAddress(&pvec_ptr);
+  }
+  b->GetEntry(event);
+  printf("Loaded event %d, size of particle vector=%d, number of primaries=%d\n",
+	       event, (int) pvec.size(), pvec[0].n_daughters());
 }
 
 void dump_json(std::vector<G4S_Particle> &out, const char *fname)
@@ -24,9 +26,9 @@ void dump_json(std::vector<G4S_Particle> &out, const char *fname)
 
 // -- primaries only
 
-void dump_primaries(const char *fname="primaries.json")
+void dump_primaries(int event=0, const char *fname="primaries.json")
 {
-  dump_setup_branch();
+  dump_setup_branch(event);
 
   std::vector<G4S_Particle> out;
   // element 0 holds range of primaries
@@ -59,9 +61,9 @@ void append_secondaries_of(int pi, std::vector<G4S_Particle> &out)
   p.m_daughters_end = out.size();
 }
 
-void dump_primaries_and_scondaries(const char *fname="primaries-and-secondaries.json")
+void dump_primaries_and_scondaries(int event=0, const char *fname="primaries-and-secondaries.json")
 {
-  dump_setup_branch();
+  dump_setup_branch(event);
 
   std::vector<G4S_Particle> out;
   // element 0 holds range of primaries
@@ -84,8 +86,32 @@ void dump_primaries_and_scondaries(const char *fname="primaries-and-secondaries.
 
 // -- dump all
 
-void dump_all(const char *fname="all-particles.json")
+void dump_all(int event=0, const char *fname="all-particles.json")
 {
-  dump_setup_branch();
+  dump_setup_branch(event);
   dump_json(pvec, fname);
+}
+
+// -- print content of initial particles for all events in the file
+
+void print_primaries_for_all_events()
+{
+  int n_events = T->GetEntriesFast();
+  for (int e = 0; e < n_events; ++e)
+  {
+    dump_setup_branch(e);
+    int n_daughters = pvec[0].n_daughters();
+    for (int p = 1; p <= n_daughters; ++p)
+    {
+      G4S_Particle &d = pvec[p];
+      G4S_Particle::Vec4D &dxb = d.m_x_beg;
+      printf("  %2d  %4d | %8.3f %8.3f %8.3f | %8.3f %6.3f\n",
+             p, d.m_pdg, dxb.fX, dxb.fY, dxb.fZ, dxb.R(), dxb.Phi());
+    }
+    if (n_daughters == 2) {
+      G4S_Particle::Vec4D x21 = pvec[2].m_x_beg - pvec[1].m_x_beg;
+      G4S_Particle::Vec4D p21 = pvec[2].m_p_beg - pvec[1].m_p_beg;
+      printf("  Dxy = %.4f,  De = %.4f\n", std::hypot(x21.fX, x21.fY), std::abs(p21.fT));
+    }
+  }
 }
